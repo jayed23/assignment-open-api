@@ -46,16 +46,31 @@ export class DrinksService {
 
   async getDrinksByCategory(category: string) {
     try {
+      // Fetch drinks from the API
       const response = await axios.get(this.apiUrl, {
         headers: this.headers,
         params: { category },
       });
-      return response.data;
+  
+      // Customize the response to be cute and fun ✨
+      const customizedDrinks = response.data.map((drink: any) => ({
+        id: drink._id,
+        name: `🍹 ${drink.name} 🌟`, // Add emojis to the name
+        description: drink.description
+          ? `✨ ${drink.description} ✨` // Wrap the description with sparkles
+          : "No description available, but it’s sure to be delicious! 😋",
+        image: drink.image || "https://example.com/default-drink-image.png", // Fallback image
+        category: `🍭 ${category.toUpperCase()} 🍭`, // Add fun emojis to the category
+      }));
+  
+      return customizedDrinks;
     } catch (error) {
+      // Handle errors with a fun message
       throw new HttpException(
-        'Failed to fetch drinks by category',
+        `😢 Oh no! We couldn’t fetch the drinks in the "${category}" category. But don’t worry—we’ll fix this faster than you can say “Caramel Macchiato!” ☕✨`,
         HttpStatus.BAD_REQUEST,
       );
     }
   }
+  
 }
