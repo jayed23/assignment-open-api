@@ -15,10 +15,30 @@ export class DrinksService {
         headers: this.headers,
         params: { name },
       });
-      return response.data;
+
+      // Transform the raw data into a "cutesy" format
+      const transformedResponse = response.data.map((recipe: any) => ({
+        name: `✨ ${recipe.name} ✨`,
+        description: `💡 ${recipe.description}`,
+        image: recipe.image ? `🌟 Here's how it looks: ${recipe.image}` : '🍹 No image available!',
+        category: `📂 Category: ${recipe.category}`,
+        ingredients: `🛍️ Ingredients: ${recipe.recipeIngredient.join(', ')}`,
+        instructions: recipe.recipeInstructions.map(
+          (step: any) => `👉 Step ${step.name}: ${step.text}`
+        ),
+        prepTime: `⏱️ Prep Time: ${recipe.prepTime}`,
+        totalTime: `⏳ Total Time: ${recipe.totalTime}`,
+        serves: `🍴 Serves: ${recipe.recipeYield}`,
+        published: `📅 Published on: ${recipe.datePublished}`,
+      }));
+
+      return {
+        message: '🌸 Here’s your delicious drink recipe, crafted with love! 🌸',
+        recipes: transformedResponse,
+      };
     } catch (error) {
       throw new HttpException(
-        'Failed to fetch drinks by name',
+        'Failed to fetch drinks by name 🫤. Please try again later!',
         HttpStatus.BAD_REQUEST,
       );
     }
